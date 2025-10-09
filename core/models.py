@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -14,6 +15,7 @@ class CheckType(models.Model):
 class Tenant(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -22,10 +24,10 @@ class Tenant(models.Model):
 class Monitor(models.Model):
     name = models.CharField(max_length=100)
     url = models.CharField(max_length=200)
-    type = models.ForeignKey(type, on_delete=models.CASCADE)
+    type = models.ForeignKey(CheckType, on_delete=models.CASCADE, related_name="monitors")
     notes = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=50)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="monitors")
     last_checked = models.DateTimeField(auto_now=True)
     response = models.TextField(null=True, blank=True)
     response_code = models.IntegerField(null=True, blank=True)
@@ -37,8 +39,8 @@ class Monitor(models.Model):
     
 
 class Check(models.Model):
-    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE)
-    check_type = models.ForeignKey(CheckType, on_delete=models.CASCADE)
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="checks")
+    check_type = models.ForeignKey(CheckType, on_delete=models.CASCADE, related_name="checks")
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     status = models.CharField(max_length=50)
     response_code = models.IntegerField(null=True, blank=True)
@@ -50,8 +52,8 @@ class Check(models.Model):
 
 
 class Oncall(models.Model):
-    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="oncall")
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="oncall")
     contact_name = models.CharField(max_length=100)
     contact_info = models.CharField(max_length=200)
     phone = models.CharField(max_length=20, null=True, blank=True)
