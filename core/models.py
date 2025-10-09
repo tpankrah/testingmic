@@ -58,5 +58,6 @@ class Oncall(models.Model):
     priority = models.IntegerField()
 
     def __str__(self):
-        return f"{self.contact_name} for {self.monitor.name}"
+        return f"{self.contact_name} for {self.moniqr.name}"
     
+
