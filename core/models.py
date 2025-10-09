@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 
+    
 class CheckType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -59,5 +60,4 @@ class Oncall(models.Model):
 
     def __str__(self):
         return f"{self.contact_name} for {self.moniqr.name}"
-    
 
